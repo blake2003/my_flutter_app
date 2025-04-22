@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_test1/providers/gfalert_provider.dart';
 import 'package:flutter_test1/pages/splash_screen_page.dart';
@@ -16,10 +17,11 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
   } catch (e) {
-    // 在這裡可以記錄或上傳錯誤訊息，例如使用 Crashlytics
-    print('Firebase 初始化失敗：$e');
+    // 使用 Logger 記錄嚴重錯誤訊息，避免在 production code 中直接使用 print
+    Logger('FirebaseInit').severe('Firebase 初始化失敗', e);
     // FirebaseCrashlytics.instance.recordError(e, null, fatal: true);
   }
+
   // 全域日誌與錯誤處理設定
   setupGlobalLogging();
   setupGlobalErrorHandlers();
