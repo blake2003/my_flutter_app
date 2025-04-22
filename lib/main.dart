@@ -6,7 +6,7 @@ import 'package:flutter_test1/providers/gfalert_provider.dart';
 import 'package:flutter_test1/pages/splash_screen_page.dart';
 // 你自訂的檔案路徑請按照實際專案調整
 import 'firebase_options.dart';
-import 'logger/logger.dart';
+import 'logger/async_logger.dart';
 import 'logger/error_handler.dart';
 
 /// 進入點：負責執行 Flutter App

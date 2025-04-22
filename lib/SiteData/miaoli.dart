@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../logger/app_logger.dart';
 import 'Service/data_service.dart';
 import 'package:getwidget/getwidget.dart';
 
@@ -11,12 +12,14 @@ class HomePage22 extends StatefulWidget {
 
 class _HomePageState extends State<HomePage22> {
   List<dynamic> records = [];
+  final log = AppLogger('miaoli');
 
   Future<void> _fetchData() async {
     try {
       records = await DataService.fetchSiteData('苗栗');
       setState(() {});
     } catch (e) {
+      log.e('苗栗未加載成功', e);
       // Handle error
     }
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test1/export/data_export.dart'; // 範例：自行調整路徑
+import 'package:flutter_test1/logger/app_logger.dart';
 import 'package:flutter_test1/widgets/gfdrawer.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
 // 匯入我們剛才的 Provider
@@ -60,21 +60,17 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _showBackTop = false;
 
   /// 日誌
-  final Logger _logger = Logger('MyHomePageLogger');
-
-  // 設定一個預估的高度（高度包含間距）
-  // 假設每個網格項目高度約為 150 像素，加上間距則總共 160 像素
-  final double _gridItemHeight = 160;
+  final log = AppLogger('MyHomePage');
 
   @override
   void initState() {
     super.initState();
-    _logger.info('Initializing MyHomePage');
+    log.i('Initializing MyHomePage');
 
     // 進入頁面後延遲 700ms 顯示彈窗
     Future.delayed(const Duration(milliseconds: 700), () {
       context.read<GfAlertProvider>().showAlert(context);
-      _logger.info('Alert displayed from Provider');
+      log.i('Alert displayed from Provider');
     });
 
     _initializeScrollController();
@@ -83,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _logger.info('Disposing MyHomePage');
+    log.i('Disposing MyHomePage');
     super.dispose();
   }
 
@@ -132,14 +128,14 @@ class _MyHomePageState extends State<MyHomePage> {
       searchBar: true,
       searchHintText: '搜索你感興趣的地區',
       onTap: () {
-        _logger.info('Search bar tapped');
+        log.i('Search bar tapped');
       },
       onChanged: (value) {
-        _logger.fine('Search bar text changed: $value');
+        log.i('Search bar text changed: $value');
       },
       onSubmitted: (value) {
         String searchQuery = value.trim();
-        _logger.info('Search bar submitted: $searchQuery');
+        log.i('Search bar submitted: $searchQuery');
 
         // 根據 sites 清單找出索引
         int index = sites.indexWhere((site) => site == searchQuery);
@@ -161,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           // offset 為前面 row 個網格行高度之和，加上行間距
           double offset = row * (gridItemHeight + mainAxisSpacing);
-          _logger.info('Scrolling to offset: $offset');
+          log.i('Scrolling to offset: $offset');
 
           _scrollController.animateTo(
             offset,
@@ -169,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
             curve: Curves.easeIn,
           );
         } else {
-          _logger.info('沒有找到對應的地區: $searchQuery');
+          log.i('沒有找到對應的地區: $searchQuery');
         }
       },
     );
@@ -201,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           onTap: () {
-            _logger.info('Tapped on site: $site');
+            log.i('Tapped on site: $site');
             _navigateToPage(index);
           },
           color: Colors.black,
@@ -258,16 +254,16 @@ class _MyHomePageState extends State<MyHomePage> {
   FloatingActionButton _buildFloatingActionButton() {
     return FloatingActionButton(
       onPressed: () {
-        _logger.info('Back to top button pressed');
+        log.i('Back to top button pressed');
         try {
           _scrollController.animateTo(
             0.0,
             duration: const Duration(milliseconds: 500),
             curve: Curves.decelerate,
           );
-          _logger.info('Scroll to top animation started successfully');
+          log.i('Scroll to top animation started successfully');
         } catch (e, stack) {
-          _logger.severe('Error while scrolling to top', e, stack);
+          log.e('Error while scrolling to top', e, stack);
         }
       },
       child: Column(
