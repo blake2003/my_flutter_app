@@ -1,10 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test1/Auth_Service/register.dart';
+
+import '../../../Services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
+  static const String routeName = '/register';
+
+  const RegisterPage({super.key});
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
@@ -13,6 +17,12 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isLoading = false;
 
   Future<void> _register() async {
+    setState(() => _isLoading = true);
+
+    // 1. 同步阶段先抓住 navigator 和 messenger
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -24,9 +34,14 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _isLoading = true);
 
     try {
+      // 2. 真正发起异步注册
       await registerWithEmailAndPassword(email, password);
-      _showSnackBar("註冊成功");
-      Navigator.pop(context); // 成功後返回上一頁（登入頁）
+
+      // 3. 用之前抓好的 messenger 和 navigator
+      messenger.showSnackBar(
+        const SnackBar(content: Text('註冊成功')),
+      );
+      navigator.pop();
     } on FirebaseAuthException catch (e) {
       String msg;
       if (e.code == 'weak-password') {
@@ -36,9 +51,9 @@ class _RegisterPageState extends State<RegisterPage> {
       } else {
         msg = '註冊失敗: ${e.message}';
       }
-      _showSnackBar(msg);
+      messenger.showSnackBar(SnackBar(content: Text(msg)));
     } catch (e) {
-      _showSnackBar("註冊失敗: $e");
+      messenger.showSnackBar(SnackBar(content: Text('註冊失敗: $e')));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -60,26 +75,26 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("註冊帳號")),
+      appBar: AppBar(title: const Text("註冊帳號")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: "Email"),
+              decoration: const InputDecoration(labelText: "Email"),
             ),
             TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: "密碼"),
+              decoration: const InputDecoration(labelText: "密碼"),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _isLoading
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: _register,
-                    child: Text("註冊"),
+                    child: const Text("註冊"),
                   ),
           ],
         ),

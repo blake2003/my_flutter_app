@@ -1,24 +1,28 @@
-import 'package:flutter_test1/pages/my_home_page.dart';
-import 'package:getwidget/getwidget.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_test1/pages/guidePage/TPIColors.dart';
-import 'package:flutter_test1/pages/guidePage/TPIDataProvider.dart';
-import 'package:flutter_test1/pages/guidePage/TPIWalkThroughData.dart';
-import 'package:flutter_test1/pages/guidePage/TPIString.dart';
+// 引入必要的庫
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:logging/logging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test1/Pages/GuidePage/tpi_data_provider.dart';
+import 'package:flutter_test1/Pages/GuidePage/tpi_colors.dart';
+import 'package:flutter_test1/Pages/GuidePage/tpi_string.dart';
+import 'package:flutter_test1/Pages/GuidePage/tpi_walkthrough_data.dart';
+import 'package:flutter_test1/Pages/my_home_page.dart';
+import 'package:getwidget/getwidget.dart';
+import 'package:logging/logging.dart'; // 引入日誌庫
 
 class TPIWalkThroughScreen extends StatefulWidget {
+  static const String routeName = '/guidepage';
+
   const TPIWalkThroughScreen({super.key});
 
   @override
-  TPIWalkThroughScreenState createState() => TPIWalkThroughScreenState();
+  State<TPIWalkThroughScreen> createState() => TPIWalkThroughScreenState();
 }
 
 class TPIWalkThroughScreenState extends State<TPIWalkThroughScreen> {
   final Logger _logger = Logger('TPIWalkThroughScreen'); // 初始化 Logger 用於除錯和日誌記錄
   PageController controller = PageController(); // 控制頁面滑動
-  List<TPIWalkThroughData> list = tpiWalkThroughDataList(); // 儲存引導頁的資料
+  List<TPIWalkThroughData> list =
+      tpiWalkThroughDataList().cast<TPIWalkThroughData>(); // 儲存引導頁的資料
   int currentPageIndex = 0; // 記錄當前顯示的頁面索引
 
   @override

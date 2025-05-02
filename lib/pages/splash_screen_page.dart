@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test1/pages/AuthPage/signin_page.dart';
+import 'package:flutter_test1/Pages/AuthPage/Screens/signin_screen.dart';
 
 /// SplashScreen：進入應用程式後的啟動頁
 class SplashScreenPage extends StatefulWidget {
@@ -39,7 +39,7 @@ class SplashScreenPageState extends State<SplashScreenPage> {
             onEnd: () {
               /// 動畫結束後跳轉到 MyHomePage
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => SignInPage(),
+                builder: (BuildContext context) => const SignInScreen(),
               ));
             },
           ),

@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_test1/providers/gfalert_provider.dart';
-import 'package:flutter_test1/pages/splash_screen_page.dart';
 // 你自訂的檔案路徑請按照實際專案調整
+import 'Model/forgot_password_model.dart';
+import 'Model/sign_in_model.dart';
+import 'Routes/routes.dart';
+import 'Services/navigation_service.dart';
 import 'firebase_options.dart';
 import 'logger/async_logger.dart';
 import 'logger/error_handler.dart';
@@ -12,6 +15,9 @@ import 'logger/error_handler.dart';
 /// 進入點：負責執行 Flutter App
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化 Firebase
+  // 這裡的 try-catch 是為了捕捉 Firebase 初始化過程中的任何錯誤
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -26,13 +32,30 @@ void main() async {
   setupGlobalLogging();
   setupGlobalErrorHandlers();
 
+  // MultiProvider 注入所有 ChangeNotifier
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<GfAlertProvider>(
-          create: (_) => GfAlertProvider(),
+        ChangeNotifierProvider(create: (_) => GfAlertProvider()),
+        ChangeNotifierProvider(
+          create: (_) {
+            final model = SignInModel();
+            // model._restoreCredentials() 已在建構子裡呼叫
+            return model;
+          },
         ),
-        // ... 其他 Provider
+        ChangeNotifierProvider(
+          create: (_) {
+            final model = ForgotPasswordModel();
+
+            return model;
+          },
+        ),
+        Provider<NavigationService>(
+          create: (_) => NavigationService(),
+          // listen: false is default for Provider<T>
+        ),
+        // ... 如有其他 Provider 再繼續加
       ],
       child: const MyApp(),
     ),
@@ -45,13 +68,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 1️⃣ 從 Provider 拿到同一個 NavigationService
+    final navService = Provider.of<NavigationService>(context, listen: false);
+
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: '空氣品質監測地區',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const SplashScreenPage(),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      debugShowCheckedModeBanner: false,
+      // 首頁改成依照是否已登入決定可用 SignInModel
+
+      // 2️⃣ 把 navigatorKey 傳進去，讓全 app 都用這把 Key 來導航
+      navigatorKey: navService.navigatorKey,
+      // 3️⃣ 使用 NavigatorService 的路由表
+      initialRoute: AppRoutes.splash,
+      routes: appRouteTable,
     );
   }
 }

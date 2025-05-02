@@ -5,8 +5,6 @@ import 'package:flutter/foundation.dart';
 class Logger {
   static const String _logEndpoint = "https://example.com/api/logs";
 
-  Logger(String s);
-
   static Future<void> logEvent(String event, {String? detail}) async {
     // 先行在本地終端印出 (方便 Debug)
     debugPrint("[EVENT] $event ${detail != null ? '-> $detail' : ''}");

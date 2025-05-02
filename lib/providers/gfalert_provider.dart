@@ -1,73 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test1/logger/app_logger.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:logging/logging.dart';
 
 class GfAlertProvider extends ChangeNotifier {
-  bool _isVisible = false; // 判斷是否顯示彈窗
-  Widget _alertWidget = const SizedBox(); // 彈窗 widget
-
-  bool get isVisible => _isVisible;
+  Widget _alertWidget = const SizedBox();
+  bool get isVisible => _alertWidget is! SizedBox;
   Widget get alertWidget => _alertWidget;
 
-  final Logger _logger = Logger('GfAlertProviderLogger');
+  final log = AppLogger('gfalert_provider');
 
-  /// 顯示彈窗
-  void showAlert(BuildContext context) {
-    _isVisible = true;
+  /// 顯示通用樣板彈窗
+  /// [title]：標題文字
+  /// [content]：內容 Widget
+  /// [verticalPosition]：彈窗往下的垂直位移
+  /// [alertWidth] / [alertHeight]：可選，指定寬高
+  /// [type]：GFAlert 的樣式
+  /// [buttonText]：底部按鈕文字
+  /// [onPressed]：按鈕回呼，不傳則自動 hideAlert
+  void showAlert({
+    required BuildContext context,
+    required String title,
+    required Widget content,
+    double verticalPosition = 150,
+    double? alertWidth,
+    double? alertHeight,
+    GFAlertType type = GFAlertType.rounded,
+    String buttonText = 'Close',
+    VoidCallback? onPressed,
+  }) {
+    final mq = MediaQuery.of(context).size;
+    final width = alertWidth ?? mq.width * 0.8;
 
-    // 可以在這裡組合出你想顯示的彈窗內容，也可以把這段抽到一個方法。
-    _alertWidget = _buildSampleAlert(context);
-
-    notifyListeners();
-  }
-
-  /// 隱藏彈窗
-  void hideAlert() {
-    _isVisible = false;
-    _alertWidget = const SizedBox();
-    notifyListeners();
-    _logger.info('Hide pressed');
-  }
-
-  /// 範例：可將彈窗的組裝邏輯抽到這個 private method
-  Widget _buildSampleAlert(BuildContext context) {
-    return Stack(
+    _alertWidget = Stack(
       children: [
+        // 半透明背景，點擊也能關閉
         GestureDetector(
+          onTap: hideAlert,
           child: Container(
             color: Colors.black.withOpacity(0.3),
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            width: mq.width,
+            height: mq.height,
           ),
         ),
-        // 彈窗本體
+
+        // 真正的浮動彈窗
         GFFloatingWidget(
-          verticalPosition: 150,
+          verticalPosition: verticalPosition,
           showBlurness: false,
           body: Column(
             children: [
-              const SizedBox(height: 220),
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                color: Colors.transparent,
+              // 留空間給上方
+              SizedBox(height: verticalPosition + 20),
+              SizedBox(
+                width: width,
+                height: alertHeight,
                 child: Center(
                   child: GFAlert(
                     alignment: Alignment.center,
                     backgroundColor: Colors.white,
-                    title: 'Welcome!',
-                    content: const Text(
-                      'Get Flutter is one of the largest Flutter open-source UI library...',
-                    ),
-                    type: GFAlertType.rounded,
+                    title: title,
+                    content: content,
+                    type: type,
                     bottomBar: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
+                      children: [
                         GFButton(
-                          onPressed: hideAlert,
+                          onPressed: onPressed ?? hideAlert,
                           color: GFColors.LIGHT,
-                          child: const Text(
-                            'Close',
-                            style: TextStyle(color: Colors.black),
+                          child: Text(
+                            buttonText,
+                            style: const TextStyle(color: Colors.black),
                           ),
                         ),
                       ],
@@ -80,5 +82,14 @@ class GfAlertProvider extends ChangeNotifier {
         ),
       ],
     );
+
+    notifyListeners();
+  }
+
+  /// 隱藏彈窗
+  void hideAlert() {
+    _alertWidget = const SizedBox();
+    notifyListeners();
+    log.i('Alert hidden');
   }
 }

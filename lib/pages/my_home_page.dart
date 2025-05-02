@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test1/Components/widgets/gfdrawer.dart';
 import 'package:flutter_test1/export/data_export.dart'; // 範例：自行調整路徑
 import 'package:flutter_test1/logger/app_logger.dart';
-import 'package:flutter_test1/widgets/gfdrawer.dart';
+
 import 'package:getwidget/getwidget.dart';
 import 'package:provider/provider.dart';
 
@@ -69,7 +70,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // 進入頁面後延遲 700ms 顯示彈窗
     Future.delayed(const Duration(milliseconds: 700), () {
-      context.read<GfAlertProvider>().showAlert(context);
+      context.read<GfAlertProvider>().showAlert(
+            context: context,
+            title: "Welcome to the air quality monitoring area",
+            content: const Text(
+              'Are you ready to know how bad the air quality is?'
+              'Click the button below to start monitoring the air quality of your area!',
+            ),
+          );
       log.i('Alert displayed from Provider');
     });
 
@@ -104,12 +112,10 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           _buildGridView(),
 
-          // 當 Provider 裡 isVisible == true 時，把它的 alertWidget 疊加顯示
+          // 這裡負責把 alertWidget 疊上去
           Consumer<GfAlertProvider>(
-            builder: (ctx, gfAlert, child) {
-              if (!gfAlert.isVisible) return const SizedBox();
-              return gfAlert.alertWidget;
-            },
+            builder: (_, provider, __) =>
+                provider.isVisible ? provider.alertWidget : const SizedBox(),
           ),
         ],
       ),

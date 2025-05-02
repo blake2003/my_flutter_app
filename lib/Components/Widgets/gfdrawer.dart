@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test1/Pages/GuidePage/tpi_walkthrough_screen.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:flutter_test1/pages/introduce_page.dart';
-import 'package:flutter_test1/pages/my_home_page.dart';
+import 'package:flutter_test1/Pages/introduce_page.dart';
+import 'package:flutter_test1/Pages/my_home_page.dart';
 
-import '../pages/AuthPage/signin_page.dart';
-import '../pages/guidePage/TPIWalkThroughScreen.dart';
+import '../../Pages/AuthPage/Screens/signin_screen.dart';
 
 /// GfDrawer：自定義 Drawer，提供多項選單功能
 class GfDrawer extends StatelessWidget {
@@ -51,7 +51,7 @@ class GfDrawer extends StatelessWidget {
     // 登出後直接用 pushReplacement 清除當前路由並跳轉到登入頁，請根據實際情況調整 SignInPage 的路徑
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => SignInPage()),
+      MaterialPageRoute(builder: (_) => const SignInScreen()),
     );
   }
 }
