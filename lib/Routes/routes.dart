@@ -1,7 +1,7 @@
 // lib/routes.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_test1/Pages/AuthPage/Screens/forgot_password_screen.dart';
-import 'package:flutter_test1/Pages/AuthPage/Screens/register.dart';
+import 'package:flutter_test1/Pages/AuthPage/Screens/register_screen.dart';
 import 'package:flutter_test1/Pages/AuthPage/Screens/signin_screen.dart';
 import 'package:flutter_test1/Pages/GuidePage/tpi_walkthrough_screen.dart';
 import 'package:flutter_test1/Pages/introduce_page.dart';

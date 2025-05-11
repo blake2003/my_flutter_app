@@ -16,6 +16,7 @@ class RegisterBody extends StatelessWidget {
   Widget build(BuildContext context) {
     // 1️⃣ 取得並監聽模型
     final model = context.watch<RegisterModel>();
+    final nav = Provider.of<NavigationService>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -168,12 +169,19 @@ class RegisterBody extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Already have an account?'),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
+                  const Text('Already have an account?  '),
+                  GestureDetector(
+                    onTap: () {
+                      // 導向註冊頁
+                      nav.pushNamed('/signin');
                     },
-                    child: const Text('Login'),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.deepPurple,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
                   ),
                 ],
               ),
