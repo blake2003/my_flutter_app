@@ -1,7 +1,7 @@
 // lib/routes.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_test1/Pages/AuthPage/Screens/forgot_password_screen.dart';
-import 'package:flutter_test1/Pages/AuthPage/Screens/register_screen.dart';
+import 'package:flutter_test1/Pages/AuthPage/Screens/register.dart';
 import 'package:flutter_test1/Pages/AuthPage/Screens/signin_screen.dart';
 import 'package:flutter_test1/Pages/GuidePage/tpi_walkthrough_screen.dart';
 import 'package:flutter_test1/Pages/introduce_page.dart';
@@ -28,7 +28,7 @@ abstract class AppRoutes {
 final Map<String, WidgetBuilder> appRouteTable = {
   AppRoutes.splash: (_) => const SplashScreenPage(),
   AppRoutes.signIn: (_) => const SignInScreen(),
-  AppRoutes.register: (_) => const RegisterPage(),
+  AppRoutes.register: (_) => const RegisterScreen(),
   AppRoutes.forgotPassword: (_) => const ForgotPasswordScreen(),
   AppRoutes.guide: (_) => const TPIWalkThroughScreen(),
   AppRoutes.home: (_) => const MyHomePage(),

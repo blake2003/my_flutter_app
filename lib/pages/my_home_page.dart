@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test1/Components/Widgets/back_to_top_notifier.dart';
 import 'package:flutter_test1/Components/widgets/gfdrawer.dart';
 import 'package:flutter_test1/export/data_export.dart'; // 範例：自行調整路徑
 import 'package:flutter_test1/logger/app_logger.dart';
@@ -7,7 +8,7 @@ import 'package:getwidget/getwidget.dart';
 import 'package:provider/provider.dart';
 
 // 匯入我們剛才的 Provider
-import 'package:flutter_test1/providers/gfalert_provider.dart';
+import 'package:flutter_test1/Components/Widgets/gfalert_provider.dart';
 
 /// MyHomePage：顯示一組地區清單並導向不同頁面，包含回頂部功能與提示框
 class MyHomePage extends StatefulWidget {
@@ -17,6 +18,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+//TODO: 做狀態管理，根據複雜度選擇 Provider 或 Riverpod
 class _MyHomePageState extends State<MyHomePage> {
   /// 監測地區清單
   final List<String> sites = [
@@ -54,12 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
     'allname'
   ];
 
-  /// 滾動控制器
-  final ScrollController _scrollController = ScrollController();
-
-  /// 是否顯示「回頂部按鈕」
-  bool _showBackTop = false;
-
   /// 日誌
   final log = AppLogger('MyHomePage');
 
@@ -80,29 +76,18 @@ class _MyHomePageState extends State<MyHomePage> {
           );
       log.i('Alert displayed from Provider');
     });
-
-    _initializeScrollController();
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     log.i('Disposing MyHomePage');
     super.dispose();
   }
 
-  /// 初始化 scrollController 並監聽滾動事件
-  void _initializeScrollController() {
-    _scrollController.addListener(() {
-      setState(() {
-        // 當滾動距離大於 200 時，顯示回頂部按鈕
-        _showBackTop = _scrollController.position.pixels >= 200;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final backToTop = context.watch<BackToTopNotifier>();
+
     /// Consumer 用來監聽彈窗狀態。
     /// 也可以用 Selector 或 watch，都可以。
     return Scaffold(
@@ -113,16 +98,26 @@ class _MyHomePageState extends State<MyHomePage> {
           _buildGridView(),
 
           // 這裡負責把 alertWidget 疊上去
-          Consumer<GfAlertProvider>(
-            builder: (_, provider, __) =>
-                provider.isVisible ? provider.alertWidget : const SizedBox(),
+          Selector<GfAlertProvider, bool>(
+            selector: (_, provider) => provider.isVisible,
+            builder: (context, isVisible, __) {
+              // 當 isVisible 為 false 時直接返回空容器
+              if (!isVisible) return const SizedBox();
+
+              // 只有在 isVisible=true 時，才去讀一次 alertWidget
+              // 這裡用 read 保證不再註冊額外的監聽
+              final alert = context.read<GfAlertProvider>().alertWidget;
+              return alert;
+            },
           ),
         ],
       ),
       drawer: const GFDrawer(
         child: GfDrawer(), // 你自定義的 Drawer
       ),
-      floatingActionButton: _showBackTop ? _buildFloatingActionButton() : null,
+      floatingActionButton: backToTop.showBackTop
+          ? _buildFloatingActionButton(backToTop.scrollController)
+          : null,
     );
   }
 
@@ -140,6 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
         log.i('Search bar text changed: $value');
       },
       onSubmitted: (value) {
+        final controller = context.read<BackToTopNotifier>().scrollController;
+
         String searchQuery = value.trim();
         log.i('Search bar submitted: $searchQuery');
 
@@ -165,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
           double offset = row * (gridItemHeight + mainAxisSpacing);
           log.i('Scrolling to offset: $offset');
 
-          _scrollController.animateTo(
+          controller.animateTo(
             offset,
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeIn,
@@ -179,8 +176,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// 建立地區清單 GridView
   Widget _buildGridView() {
+    // 使用 Provider 來獲取 BackToTopNotifier
+    final backToTop = context.watch<BackToTopNotifier>();
+
     return GridView.builder(
-      controller: _scrollController,
+      controller: backToTop.scrollController,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2, // 每行 2 個
         mainAxisSpacing: 8, // 每行間距
@@ -257,12 +257,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   /// 建立「回到頂部」Floating Action Button
-  FloatingActionButton _buildFloatingActionButton() {
+  FloatingActionButton _buildFloatingActionButton(ScrollController controller) {
+    final controller = context.read<BackToTopNotifier>().scrollController;
+
     return FloatingActionButton(
       onPressed: () {
         log.i('Back to top button pressed');
         try {
-          _scrollController.animateTo(
+          controller.animateTo(
             0.0,
             duration: const Duration(milliseconds: 500),
             curve: Curves.decelerate,
@@ -273,6 +275,8 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       },
       child: Column(
+        mainAxisSize: MainAxisSize.min, // 讓 Column 只撐住內容高度
+        mainAxisAlignment: MainAxisAlignment.center, // 置中排版
         children: <Widget>[
           Container(
             margin: const EdgeInsets.only(top: 4),
@@ -287,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: const Text(
               'Top',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 13,
                 color: Color.fromARGB(255, 164, 161, 170),
               ),
             ),

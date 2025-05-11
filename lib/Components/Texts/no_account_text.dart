@@ -25,9 +25,9 @@ class NoAccountText extends StatelessWidget {
             // 導向註冊頁
             nav.pushNamed('/register');
           },
-          child: Text(
+          child: const Text(
             'Sign Up',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.deepPurple,
               decoration: TextDecoration.underline,
             ),

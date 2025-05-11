@@ -5,27 +5,51 @@ import '../logger/auth_log.dart';
 import 'credential_storage.dart';
 
 /// 註冊
-Future<void> registerWithEmailAndPassword(String email, String password) async {
-  final log = AppLogger('register');
-  log.i('註冊中...');
+class RegisterService {
+  static Future<String?> register({
+    required String email,
+    required String password,
+  }) async {
+    final log = AppLogger('register');
+    log.i('註冊中...');
 
-  try {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    // 注册成功后的处理
-  } on FirebaseAuthException catch (e) {
-    if (e.code == 'weak-password') {
-      log.i('密码强度不足。');
-    } else if (e.code == 'email-already-in-use') {
-      log.i('该电子邮件地址已被使用。');
+    // 前置驗證
+    if (email.isEmpty || password.isEmpty) {
+      return '請輸入 Email 和密碼';
     }
-  } catch (e) {
-    log.e('註冊失敗: $e');
-    // 其他錯誤處理
-  } finally {
-    log.i('註冊結束');
+    if (!Validator.isValidEmail(email)) {
+      return 'Email 格式不正確';
+    }
+    if (!Validator.isValidPassword(password)) {
+      return '密碼格式不符合要求';
+    }
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      
+      try {
+        await Logger.logEvent('Register success', detail: email);
+      } catch (_) {/* 忽略 log 失敗 */}
+
+      return null;
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'weak-password':
+          return '密碼強度不足';
+        case 'email-already-in-use':
+          return '該電子郵件地址已被使用';
+        default:
+          return '註冊失敗：${e.message ?? e.code}';
+      }
+    } catch (e) {
+      log.e('註冊失敗: $e');
+      return '註冊失敗：$e';
+    } finally {
+      log.i('註冊結束');
+    }
   }
 }
 

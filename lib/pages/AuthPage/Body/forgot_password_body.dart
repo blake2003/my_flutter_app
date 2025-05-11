@@ -3,7 +3,7 @@ import 'package:flutter_test1/Components/Texts/no_account_text.dart';
 import 'package:flutter_test1/Model/forgot_password_model.dart';
 import 'package:flutter_test1/Services/navigation_service.dart';
 import 'package:flutter_test1/logger/app_logger.dart';
-import 'package:flutter_test1/providers/gfalert_provider.dart';
+import 'package:flutter_test1/Components/Widgets/gfalert_provider.dart';
 //import 'package:flutter_test1/Services/navigation_service.dart';
 import 'package:provider/provider.dart';
 

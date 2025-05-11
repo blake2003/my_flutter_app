@@ -1,13 +1,10 @@
-// lib/pages/AuthPage/Body/sign_body.dart
-
 import 'package:flutter/material.dart';
-import 'package:flutter_test1/Model/sign_in_model.dart';
+import 'package:flutter_test1/Model/register_model.dart';
 import 'package:flutter_test1/Services/navigation_service.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
-class SignInBody extends StatelessWidget {
-  const SignInBody({super.key});
+class RegisterBody extends StatelessWidget {
+  const RegisterBody({super.key});
 
   // 定義邊框樣式
   OutlineInputBorder _border() => OutlineInputBorder(
@@ -18,8 +15,7 @@ class SignInBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 1️⃣ 取得並監聽模型
-    final model = context.watch<SignInModel>();
-    final nav = Provider.of<NavigationService>(context, listen: false);
+    final model = context.watch<RegisterModel>();
 
     return Scaffold(
       appBar: AppBar(
@@ -35,24 +31,34 @@ class SignInBody extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 8),
-              const Text(
-                'Welcome to AMQ',
-                style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '創建新帳號',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '請填寫以下信息完成註冊，加入我們的平台',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 12),
-              const Text(
-                'Log in with your email and password\nor continue with social media',
-                style: TextStyle(fontSize: 15, color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
 
-              // E-mail
+              const SizedBox(height: 24),
+              // 電子郵件輸入框
               TextField(
-                controller: model.emailController, // 2️⃣ 綁定 controller
+                controller: model.passwordController,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   hintText: 'Enter your email',
@@ -60,16 +66,14 @@ class SignInBody extends StatelessWidget {
                   border: _border(),
                   enabledBorder: _border(),
                   focusedBorder: _border(),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 ),
+                keyboardType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
-              // Password
+              // 密碼輸入框
               TextField(
-                controller: model.passwordController, // 2️⃣ 綁定 controller
-                obscureText: true,
+                controller: model.passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   hintText: 'Enter your password',
@@ -77,42 +81,26 @@ class SignInBody extends StatelessWidget {
                   border: _border(),
                   enabledBorder: _border(),
                   focusedBorder: _border(),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 ),
+                obscureText: true,
               ),
-              const SizedBox(height: 24),
-
-              // Remember me + Forgot password
-              Row(
-                children: [
-                  Checkbox(
-                    value: model.remember, // 3️⃣ 綁定 remember
-                    onChanged: model.toggleRemember, // 3️⃣ 切換事件
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  const Text('Remember me'),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      // 導向註冊頁
-                      nav.pushNamed('/forgot_password');
-                    },
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: Colors.deepPurple,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ), //這裡有問題要改
-                ],
+              const SizedBox(height: 16),
+              // 確認密碼輸入框
+              TextField(
+                controller: model.confirmPasswordController,
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  hintText: 'Enter your password again',
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  border: _border(),
+                  enabledBorder: _border(),
+                  focusedBorder: _border(),
+                ),
+                obscureText: true,
               ),
               const SizedBox(height: 16),
 
-              // Continue button
+              // 註冊按鈕
               SizedBox(
                 height: 54,
                 child: ElevatedButton(
@@ -125,6 +113,9 @@ class SignInBody extends StatelessWidget {
                   onPressed: model.isLoading
                       ? null
                       : () async {
+                          // 隱藏鍵盤
+                          FocusScope.of(context).unfocus();
+
                           // 同步先抓 navigator & messenger
                           final nav = Provider.of<NavigationService>(context,
                               listen: false);
@@ -138,18 +129,23 @@ class SignInBody extends StatelessWidget {
                             debugPrint('submit() threw: $e\n$st');
                             messenger.showSnackBar(
                               const SnackBar(
-                                content: Text('登入失敗（系統錯誤）'),
+                                content: Text('註冊失敗（系統錯誤）'),
                               ),
                             );
                             return;
                           }
 
                           if (ok) {
-                            nav.pushNamed('/guidepage');
+                            // 註冊成功，顯示提示並返回登入頁
+                            messenger.showSnackBar(
+                              const SnackBar(content: Text('註冊成功')),
+                            );
+                            // 註冊成功後跳轉回登入頁
+                            nav.pushNamed('/signin');
                           } else {
                             messenger.showSnackBar(
                               SnackBar(
-                                content: Text(model.error ?? '登入失敗'),
+                                content: Text(model.error ?? '註冊失敗'),
                               ),
                             );
                           }
@@ -162,54 +158,25 @@ class SignInBody extends StatelessWidget {
                               color: Colors.white, strokeWidth: 2),
                         )
                       : const Text(
-                          'Continue',
+                          'Sign Up',
                           style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                 ),
               ),
               const SizedBox(height: 32),
-
-              // social icons
+              // 返回登入的提示
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                      icon: Icon(MdiIcons.fromString("google")),
-                      iconSize: 24,
-                      onPressed: () {}),
-                  IconButton(
-                      icon: Icon(MdiIcons.fromString("facebook")),
-                      iconSize: 24,
-                      onPressed: () {}),
-                  IconButton(
-                      icon: Icon(MdiIcons.fromString("twitter")),
-                      iconSize: 24,
-                      onPressed: () {}),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Sign-up text
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account?  "),
-                  GestureDetector(
-                    onTap: () {
-                      // 導向註冊頁
-                      nav.pushNamed('/register');
+                  const Text('Already have an account?'),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
                     },
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        color: Colors.deepPurple,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
+                    child: const Text('Login'),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
             ],
           ),
         ),

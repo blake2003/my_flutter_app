@@ -2,9 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_test1/providers/gfalert_provider.dart';
+import 'package:flutter_test1/Components/Widgets/gfalert_provider.dart';
 // 你自訂的檔案路徑請按照實際專案調整
+import 'Components/Widgets/back_to_top_notifier.dart';
 import 'Model/forgot_password_model.dart';
+import 'Model/register_model.dart';
 import 'Model/sign_in_model.dart';
 import 'Routes/routes.dart';
 import 'Services/navigation_service.dart';
@@ -36,11 +38,21 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        // 這裡的 ChangeNotifierProvider 是用來提供狀態管理的
+        // 這些 Provider 可以在整個應用程式中被使用
+        ChangeNotifierProvider(create: (_) => BackToTopNotifier()),
         ChangeNotifierProvider(create: (_) => GfAlertProvider()),
         ChangeNotifierProvider(
           create: (_) {
             final model = SignInModel();
             // model._restoreCredentials() 已在建構子裡呼叫
+            return model;
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (_) {
+            final model = RegisterModel();
+
             return model;
           },
         ),
