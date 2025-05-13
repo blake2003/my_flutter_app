@@ -4,6 +4,7 @@ import 'package:flutter_test1/Pages/AuthPage/Screens/forgot_password_screen.dart
 import 'package:flutter_test1/Pages/AuthPage/Screens/register_screen.dart';
 import 'package:flutter_test1/Pages/AuthPage/Screens/signin_screen.dart';
 import 'package:flutter_test1/Pages/GuidePage/tpi_walkthrough_screen.dart';
+import 'package:flutter_test1/Pages/GuidePage2/guide_screen.dart';
 import 'package:flutter_test1/Pages/introduce_page.dart';
 import 'package:flutter_test1/Pages/my_home_page.dart';
 import 'package:flutter_test1/Pages/splash_screen_page.dart';
@@ -21,6 +22,7 @@ abstract class AppRoutes {
   static const guide = '/guidepage';
   static const home = '/home';
   static const introduce = '/introduce';
+  static const guide2 = '/onboarding';
   // … 一直到 homePage30
 }
 
@@ -31,6 +33,7 @@ final Map<String, WidgetBuilder> appRouteTable = {
   AppRoutes.register: (_) => const RegisterScreen(),
   AppRoutes.forgotPassword: (_) => const ForgotPasswordScreen(),
   AppRoutes.guide: (_) => const TPIWalkThroughScreen(),
+  AppRoutes.guide2: (_) => const GuideScreen(),
   AppRoutes.home: (_) => const MyHomePage(),
   AppRoutes.introduce: (_) => const IntroducePage(),
 

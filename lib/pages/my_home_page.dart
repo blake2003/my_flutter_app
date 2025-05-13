@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test1/Components/Widgets/back_to_top_notifier.dart';
+// 匯入我們剛才的 Provider
+import 'package:flutter_test1/Components/Widgets/gfalert_provider.dart';
 import 'package:flutter_test1/Components/widgets/gfdrawer.dart';
 import 'package:flutter_test1/export/data_export.dart'; // 範例：自行調整路徑
 import 'package:flutter_test1/logger/app_logger.dart';
-
 import 'package:getwidget/getwidget.dart';
 import 'package:provider/provider.dart';
-
-// 匯入我們剛才的 Provider
-import 'package:flutter_test1/Components/Widgets/gfalert_provider.dart';
 
 /// MyHomePage：顯示一組地區清單並導向不同頁面，包含回頂部功能與提示框
 class MyHomePage extends StatefulWidget {
@@ -18,6 +16,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+//TODO:手機版面顯示數量過多，需調整版面
+//TODO:手機版面顯示數量過多，需調整版面，內容也是
 //TODO: 做狀態管理，根據複雜度選擇 Provider 或 Riverpod
 class _MyHomePageState extends State<MyHomePage> {
   /// 監測地區清單

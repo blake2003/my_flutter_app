@@ -145,7 +145,7 @@ class SignInBody extends StatelessWidget {
                           }
 
                           if (ok) {
-                            nav.pushNamed('/guidepage');
+                            nav.pushNamed('/onboarding');
                           } else {
                             messenger.showSnackBar(
                               SnackBar(

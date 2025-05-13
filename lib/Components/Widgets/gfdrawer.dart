@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test1/Pages/GuidePage/tpi_walkthrough_screen.dart';
-import 'package:getwidget/getwidget.dart';
+import 'package:flutter_test1/Pages/GuidePage2/guide_screen.dart';
 import 'package:flutter_test1/Pages/introduce_page.dart';
 import 'package:flutter_test1/Pages/my_home_page.dart';
+import 'package:getwidget/getwidget.dart';
 
 import '../../Pages/AuthPage/Screens/signin_screen.dart';
 
@@ -28,7 +28,7 @@ class GfDrawer extends StatelessWidget {
           ),
           DrawerListTile(
             title: '回導覽頁',
-            onTap: () => _navigateTo(context, const TPIWalkThroughScreen()),
+            onTap: () => _navigateTo(context, const GuideScreen()),
           ),
           // 新增「登出」按鈕
           DrawerListTile(
