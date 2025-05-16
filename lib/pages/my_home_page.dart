@@ -96,7 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         children: [
           _buildGridView(),
-
           // 這裡負責把 alertWidget 疊上去
           Selector<GfAlertProvider, bool>(
             selector: (_, provider) => provider.isVisible,
@@ -199,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
             style: const TextStyle(
               color: Colors.white,
               fontSize: 30,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
             ),
           ),
           onTap: () {

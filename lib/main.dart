@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test1/Components/Widgets/gfalert_provider.dart';
+import 'package:flutter_test1/SiteData/Provider/multi_site_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
@@ -67,6 +68,10 @@ void main() async {
         Provider<NavigationService>(
           create: (_) => NavigationService(),
           // listen: false is default for Provider<T>
+        ),
+        ChangeNotifierProvider(
+          create: (_) =>
+              MultiSiteProvider()..fetchAll(['板橋', '金門', '臺南', '高雄', '彰化', '嘉義', '朴子']),
         ),
         // ... 如有其他 Provider 再繼續加
       ],

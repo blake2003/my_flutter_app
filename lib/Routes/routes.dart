@@ -8,6 +8,7 @@ import 'package:flutter_test1/Pages/GuidePage2/guide_screen.dart';
 import 'package:flutter_test1/Pages/introduce_page.dart';
 import 'package:flutter_test1/Pages/my_home_page.dart';
 import 'package:flutter_test1/Pages/splash_screen_page.dart';
+import 'package:flutter_test1/SiteData/Site/banqiao.dart';
 
 // 假設 HomePage1…HomePage30 各自存在對應檔案
 
@@ -23,6 +24,7 @@ abstract class AppRoutes {
   static const home = '/home';
   static const introduce = '/introduce';
   static const guide2 = '/onboarding';
+  static const homePage29 = '/banqiao';
   // … 一直到 homePage30
 }
 
@@ -36,6 +38,6 @@ final Map<String, WidgetBuilder> appRouteTable = {
   AppRoutes.guide2: (_) => const GuideScreen(),
   AppRoutes.home: (_) => const MyHomePage(),
   AppRoutes.introduce: (_) => const IntroducePage(),
-
+  AppRoutes.homePage29: (_) => const HomePage29(),
   // … 其他 homePageN
 };
