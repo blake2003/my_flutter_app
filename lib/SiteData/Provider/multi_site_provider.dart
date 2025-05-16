@@ -31,13 +31,13 @@ class MultiSiteProvider extends ChangeNotifier {
     }
   }
 
-  /// 清除指定站点的数据
+  /// 清除指定站点的數據
   void clearSite(String site) {
     _records.remove(site);
     notifyListeners();
   }
 
-  /// 清除所有站点的数据
+  /// 清除所有站点的數據
   void clearAll() {
     _records.clear();
     notifyListeners();

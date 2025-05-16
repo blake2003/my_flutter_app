@@ -19,9 +19,9 @@ class HomePage16 extends StatelessWidget {
   Future<void> _fetchData(BuildContext context) async {
     final log = AppLogger('douliu');
     try {
-      log.i('开始获取斗六数据');
+      log.i('開始獲取斗六數據');
       await context.read<MultiSiteProvider>().fetchAll(['斗六']);
-      log.i('斗六数据获取成功');
+      log.i('斗六數據獲取成功');
     } catch (e) {
       log.e('斗六未加載成功', e);
     }
@@ -30,12 +30,12 @@ class HomePage16 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final log = AppLogger('douliu');
-    log.i('构建斗六页面');
-    
+    log.i('構建斗六页面');
+
     final provider = context.watch<MultiSiteProvider>();
     final records = provider.recordsOf('斗六') ?? [];
-    
-    log.i('获取到斗六记录数: ${records.length}');
+
+    log.i('獲取到斗六紀錄数: ${records.length}');
 
     return Scaffold(
       appBar:
@@ -56,7 +56,8 @@ class HomePage16 extends StatelessWidget {
                 itemBuilder: (_, i) {
                   final r = records[i];
                   final c = double.parse(r['concentration'].toString());
-                  log.d('显示记录 #$i: ${r['sitename']}, 浓度: ${r['concentration']}');
+                  log.d(
+                      '顯示紀錄 #$i: ${r['sitename']}, 濃度: ${r['concentration']}');
 
                   return GFListTile(
                     color: Colors.black,
