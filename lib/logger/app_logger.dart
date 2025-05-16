@@ -1,25 +1,22 @@
-// lib/logger/app_logger.dart
-import 'dart:async';
-import 'package:ansicolor/ansicolor.dart';
 import 'package:flutter/foundation.dart'; // kDebugMode
 import 'package:logging/logging.dart';
+import 'package:ansicolor/ansicolor.dart';
 
-/// 1) 呼叫 AppLogger('ClassName').i('message');
 class AppLogger {
   factory AppLogger(String name) =>
       _cache.putIfAbsent(name, () => AppLogger._(name));
   AppLogger._(this._name);
   final String _name;
-  static final Map<String, AppLogger> _cache = {};
+  static final _cache = <String, AppLogger>{};
 
-  // 包一層，避免每次都須 import logging
-  void i(Object message) => Logger(_name).info(message);
-  void d(Object message) => Logger(_name).fine(message);
-  void w(Object message) => Logger(_name).warning(message);
-  void e(Object message, [Object? error, StackTrace? st]) =>
-      Logger(_name).severe(message, error, st);
+  // 快捷呼叫
+  void d(Object msg) => Logger(_name).fine(msg);
+  void i(Object msg) => Logger(_name).info(msg);
+  void w(Object msg) => Logger(_name).warning(msg);
+  void e(Object msg, [Object? err, StackTrace? st]) =>
+      Logger(_name).severe(msg, err, st);
 
-  /// 2) 在 main() 最早處呼叫一次
+  /// 在 main() 中最早呼叫一次
   static void init() {
     Logger.root.level = kDebugMode ? Level.ALL : Level.WARNING;
     hierarchicalLoggingEnabled = true;
@@ -46,12 +43,13 @@ class AppLogger {
       if (kDebugMode) debugPrint(line);
 
       // SEVERE 以上可上傳遠端
-      if (rec.level >= Level.SEVERE) await _uploadToRemote(rec);
+      if (rec.level >= Level.SEVERE) await _upload(rec);
     });
   }
 
-  /// 3) 抽象化遠端上傳，方便替換
-  static Future<void> _uploadToRemote(LogRecord rec) async {
-    // TODO: 整合 Crashlytics / Sentry / 自建 API
+  static Future<void> _upload(LogRecord r) async {
+    // TODO: Crashlytics / Sentry / 自建 API
   }
 }
+
+// log顏色不會改變

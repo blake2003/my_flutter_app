@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test1/pages/introduce_page.dart';
-import 'package:flutter_test1/pages/my_home_page.dart';
+import 'package:flutter_test1/Pages/introduce_page.dart';
+import 'package:flutter_test1/Pages/my_home_page.dart';
 import 'package:getwidget/getwidget.dart';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
 
   @override
-  _FirstPageState createState() => _FirstPageState();
+  State<FirstPage> createState() => _FirstPageState();
 }
 
 class _FirstPageState extends State<FirstPage> {

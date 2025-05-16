@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -98,6 +97,23 @@ class _IntroducePageState extends State<IntroducePage> {
 class MyAccordionList extends StatelessWidget {
   const MyAccordionList({Key? key}) : super(key: key);
 
+  Future<void> _openUrl(BuildContext context) async {
+    // 在 await 之前，就同步「取用」一次 messenger
+    final messenger = ScaffoldMessenger.of(context);
+
+    final uri = Uri.parse('https://data.moenv.gov.tw/dataset/detail/aqx_p_10');
+
+    final success = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+    if (!success) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('無法開啟 $uri')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -133,13 +149,17 @@ class MyAccordionList extends StatelessWidget {
                 text: "資料來源: ",
                 style: TextStyle(color: Colors.red),
               ),
-              TextSpan(
-                text: "點擊跳轉",
-                style: const TextStyle(color: Colors.blue),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    launch("https://data.moenv.gov.tw/dataset/detail/aqx_p_10");
-                  },
+              WidgetSpan(
+                child: GestureDetector(
+                  onTap: () => _openUrl(context),
+                  child: const Text(
+                    '點擊跳轉',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

@@ -7,8 +7,9 @@
         {
             "name": "flutter_test1",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
         },
+        
         {
             "name": "flutter_test1 (profile mode)",
             "request": "launch",
@@ -19,7 +20,7 @@
             "name": "flutter_test1 (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
         }
     ]
 }
