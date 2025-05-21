@@ -1,17 +1,27 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test1/State_provider/SiteData_state/multi_site_provider.dart';
+import 'package:flutter_test1/State_provider/Widget_state/Widgets/gfalert_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_test1/providers/gfalert_provider.dart';
-import 'package:flutter_test1/pages/splash_screen_page.dart';
+
+import 'Core/Routing/routes.dart';
+import 'Data/Model/forgot_password_model.dart';
+import 'Data/Model/register_model.dart';
+import 'Data/Model/sign_in_model.dart';
+import 'Data/Services/navigation_service.dart';
+import 'Logger/async_logger.dart';
+import 'Logger/error_handler.dart';
 // 你自訂的檔案路徑請按照實際專案調整
+import 'State_provider/Widget_state/Widgets/back_to_top_notifier.dart';
 import 'firebase_options.dart';
-import 'logger/async_logger.dart';
-import 'logger/error_handler.dart';
 
 /// 進入點：負責執行 Flutter App
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化 Firebase
+  // 這裡的 try-catch 是為了捕捉 Firebase 初始化過程中的任何錯誤
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -26,13 +36,75 @@ void main() async {
   setupGlobalLogging();
   setupGlobalErrorHandlers();
 
+  // MultiProvider 注入所有 ChangeNotifier
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<GfAlertProvider>(
-          create: (_) => GfAlertProvider(),
+        // 這裡的 ChangeNotifierProvider 是用來提供狀態管理的
+        // 這些 Provider 可以在整個應用程式中被使用
+        ChangeNotifierProvider(create: (_) => BackToTopNotifier()),
+        ChangeNotifierProvider(create: (_) => GfAlertProvider()),
+        ChangeNotifierProvider(
+          create: (_) {
+            final model = SignInModel();
+            // model._restoreCredentials() 已在建構子裡呼叫
+            return model;
+          },
         ),
-        // ... 其他 Provider
+        ChangeNotifierProvider(
+          create: (_) {
+            final model = RegisterModel();
+
+            return model;
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (_) {
+            final model = ForgotPasswordModel();
+
+            return model;
+          },
+        ),
+        Provider<NavigationService>(
+          create: (_) => NavigationService(),
+          // listen: false is default for Provider<T>
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MultiSiteProvider()
+            ..fetchAll([
+              '基隆',
+              '汐止',
+              '士林',
+              '萬華',
+              '桃園',
+              '平鎮',
+              '竹東',
+              '新竹',
+              '苗栗',
+              '三義',
+              '豐原',
+              '忠明',
+              '彰化',
+              '南投',
+              '斗六',
+              '朴子',
+              '嘉義',
+              '新營',
+              '臺南',
+              '美濃',
+              '前金',
+              '屏東',
+              '恆春',
+              '臺東',
+              '花蓮',
+              '陽明',
+              '宜蘭',
+              'kinmen',
+              '馬祖',
+              '馬公'
+            ]),
+        ),
+        // ... 如有其他 Provider 再繼續加
       ],
       child: const MyApp(),
     ),
@@ -45,13 +117,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 1️⃣ 從 Provider 拿到同一個 NavigationService
+    final navService = Provider.of<NavigationService>(context, listen: false);
+
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: '空氣品質監測地區',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const SplashScreenPage(),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      debugShowCheckedModeBanner: false,
+      // 首頁改成依照是否已登入決定可用 SignInModel
+
+      // 2️⃣ 把 navigatorKey 傳進去，讓全 app 都用這把 Key 來導航
+      navigatorKey: navService.navigatorKey,
+      // 3️⃣ 使用 NavigatorService 的路由表
+      initialRoute: AppRoutes.splash,
+      routes: appRouteTable,
     );
   }
 }
