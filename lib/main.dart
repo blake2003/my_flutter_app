@@ -1,20 +1,20 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test1/Components/Widgets/gfalert_provider.dart';
-import 'package:flutter_test1/SiteData/Provider/multi_site_provider.dart';
+import 'package:flutter_test1/State_provider/SiteData_state/multi_site_provider.dart';
+import 'package:flutter_test1/State_provider/Widget_state/Widgets/gfalert_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
+import 'Core/Routing/routes.dart';
+import 'Data/Model/forgot_password_model.dart';
+import 'Data/Model/register_model.dart';
+import 'Data/Model/sign_in_model.dart';
+import 'Data/Services/navigation_service.dart';
+import 'Logger/async_logger.dart';
+import 'Logger/error_handler.dart';
 // 你自訂的檔案路徑請按照實際專案調整
-import 'Components/Widgets/back_to_top_notifier.dart';
-import 'Model/forgot_password_model.dart';
-import 'Model/register_model.dart';
-import 'Model/sign_in_model.dart';
-import 'Routes/routes.dart';
-import 'Services/navigation_service.dart';
+import 'State_provider/Widget_state/Widgets/back_to_top_notifier.dart';
 import 'firebase_options.dart';
-import 'logger/async_logger.dart';
-import 'logger/error_handler.dart';
 
 /// 進入點：負責執行 Flutter App
 void main() async {
@@ -70,8 +70,39 @@ void main() async {
           // listen: false is default for Provider<T>
         ),
         ChangeNotifierProvider(
-          create: (_) =>
-              MultiSiteProvider()..fetchAll(['板橋', '金門', '臺南', '高雄', '彰化', '嘉義', '朴子']),
+          create: (_) => MultiSiteProvider()
+            ..fetchAll([
+              '基隆',
+              '汐止',
+              '士林',
+              '萬華',
+              '桃園',
+              '平鎮',
+              '竹東',
+              '新竹',
+              '苗栗',
+              '三義',
+              '豐原',
+              '忠明',
+              '彰化',
+              '南投',
+              '斗六',
+              '朴子',
+              '嘉義',
+              '新營',
+              '臺南',
+              '美濃',
+              '前金',
+              '屏東',
+              '恆春',
+              '臺東',
+              '花蓮',
+              '陽明',
+              '宜蘭',
+              'kinmen',
+              '馬祖',
+              '馬公'
+            ]),
         ),
         // ... 如有其他 Provider 再繼續加
       ],
